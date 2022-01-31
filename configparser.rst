@@ -77,18 +77,20 @@ creating the above configuration file programmatically.
 
    >>> import configparser
    >>> config = configparser.ConfigParser()
-   >>> config['DEFAULT'] = {'ServerAliveInterval': '45',
-   ...                      'Compression': 'yes',
-   ...                      'CompressionLevel': '9'}
-   >>> config['bitbucket.org'] = {}
-   >>> config['bitbucket.org']['User'] = 'hg'
-   >>> config['topsecret.server.com'] = {}
-   >>> topsecret = config['topsecret.server.com']
-   >>> topsecret['Port'] = '50022'     # mutates the parser
-   >>> topsecret['ForwardX11'] = 'no'  # same here
-   >>> config['DEFAULT']['ForwardX11'] = 'yes'
-   >>> with open('example.ini', 'w') as configfile:
-   ...   config.write(configfile)
+   >>> config["DEFAULT"] = {
+   ...     "ServerAliveInterval": "45",
+   ...     "Compression": "yes",
+   ...     "CompressionLevel": "9",
+   ... }
+   >>> config["bitbucket.org"] = {}
+   >>> config["bitbucket.org"]["User"] = "hg"
+   >>> config["topsecret.server.com"] = {}
+   >>> topsecret = config["topsecret.server.com"]
+   >>> topsecret["Port"] = "50022"  # mutates the parser
+   >>> topsecret["ForwardX11"] = "no"  # same here
+   >>> config["DEFAULT"]["ForwardX11"] = "yes"
+   >>> with open("example.ini", "w") as configfile:
+   ...     config.write(configfile)
    ...
 
 As you can see, we can treat a config parser much like a dictionary.
@@ -103,31 +105,32 @@ back and explore the data it holds.
    >>> config = configparser.ConfigParser()
    >>> config.sections()
    []
-   >>> config.read('example.ini')
+   >>> config.read("example.ini")
    ['example.ini']
    >>> config.sections()
    ['bitbucket.org', 'topsecret.server.com']
-   >>> 'bitbucket.org' in config
+   >>> "bitbucket.org" in config
    True
-   >>> 'bytebong.com' in config
+   >>> "bytebong.com" in config
    False
-   >>> config['bitbucket.org']['User']
+   >>> config["bitbucket.org"]["User"]
    'hg'
-   >>> config['DEFAULT']['Compression']
+   >>> config["DEFAULT"]["Compression"]
    'yes'
-   >>> topsecret = config['topsecret.server.com']
-   >>> topsecret['ForwardX11']
+   >>> topsecret = config["topsecret.server.com"]
+   >>> topsecret["ForwardX11"]
    'no'
-   >>> topsecret['Port']
+   >>> topsecret["Port"]
    '50022'
-   >>> for key in config['bitbucket.org']:  # doctest: +SKIP
+   >>> for key in config["bitbucket.org"]:  # doctest: +SKIP
    ...     print(key)
+   ...
    user
    compressionlevel
    serveraliveinterval
    compression
    forwardx11
-   >>> config['bitbucket.org']['ForwardX11']
+   >>> config["bitbucket.org"]["ForwardX11"]
    'yes'
 
 As we can see above, the API is pretty straightforward.  The only bit of magic
@@ -145,9 +148,9 @@ datatypes, you should convert on your own:
 
 .. doctest::
 
-   >>> int(topsecret['Port'])
+   >>> int(topsecret["Port"])
    50022
-   >>> float(topsecret['CompressionLevel'])
+   >>> float(topsecret["CompressionLevel"])
    9.0
 
 Since this task is so common, config parsers provide a range of handy getter
@@ -160,11 +163,11 @@ recognizes Boolean values from ``'yes'``/``'no'``, ``'on'``/``'off'``,
 
 .. doctest::
 
-   >>> topsecret.getboolean('ForwardX11')
+   >>> topsecret.getboolean("ForwardX11")
    False
-   >>> config['bitbucket.org'].getboolean('ForwardX11')
+   >>> config["bitbucket.org"].getboolean("ForwardX11")
    True
-   >>> config.getboolean('bitbucket.org', 'Compression')
+   >>> config.getboolean("bitbucket.org", "Compression")
    True
 
 Apart from :meth:`~ConfigParser.getboolean`, config parsers also
@@ -180,12 +183,12 @@ provide fallback values:
 
 .. doctest::
 
-   >>> topsecret.get('Port')
+   >>> topsecret.get("Port")
    '50022'
-   >>> topsecret.get('CompressionLevel')
+   >>> topsecret.get("CompressionLevel")
    '9'
-   >>> topsecret.get('Cipher')
-   >>> topsecret.get('Cipher', '3des-cbc')
+   >>> topsecret.get("Cipher")
+   >>> topsecret.get("Cipher", "3des-cbc")
    '3des-cbc'
 
 Please note that default values have precedence over fallback values.
@@ -196,7 +199,7 @@ even if we specify a fallback:
 
 .. doctest::
 
-   >>> topsecret.get('CompressionLevel', '3')
+   >>> topsecret.get("CompressionLevel", "3")
    '9'
 
 One more thing to be aware of is that the parser-level :meth:`get` method
@@ -206,8 +209,7 @@ the ``fallback`` keyword-only argument:
 
 .. doctest::
 
-   >>> config.get('bitbucket.org', 'monster',
-   ...            fallback='No such things as monsters')
+   >>> config.get("bitbucket.org", "monster", fallback="No such things as monsters")
    'No such things as monsters'
 
 The same ``fallback`` argument can be used with the
@@ -216,12 +218,12 @@ The same ``fallback`` argument can be used with the
 
 .. doctest::
 
-   >>> 'BatchMode' in topsecret
+   >>> "BatchMode" in topsecret
    False
-   >>> topsecret.getboolean('BatchMode', fallback=True)
+   >>> topsecret.getboolean("BatchMode", fallback=True)
    True
-   >>> config['DEFAULT']['BatchMode'] = 'no'
-   >>> topsecret.getboolean('BatchMode', fallback=True)
+   >>> config["DEFAULT"]["BatchMode"] = "no"
+   >>> topsecret.getboolean("BatchMode", fallback=True)
    False
 
 
@@ -471,19 +473,16 @@ the :meth:`__init__` options:
   .. doctest::
 
      >>> parser = configparser.ConfigParser()
-     >>> parser.read_dict({'section1': {'key1': 'value1',
-     ...                                'key2': 'value2',
-     ...                                'key3': 'value3'},
-     ...                   'section2': {'keyA': 'valueA',
-     ...                                'keyB': 'valueB',
-     ...                                'keyC': 'valueC'},
-     ...                   'section3': {'foo': 'x',
-     ...                                'bar': 'y',
-     ...                                'baz': 'z'}
-     ... })
+     >>> parser.read_dict(
+     ...     {
+     ...         "section1": {"key1": "value1", "key2": "value2", "key3": "value3"},
+     ...         "section2": {"keyA": "valueA", "keyB": "valueB", "keyC": "valueC"},
+     ...         "section3": {"foo": "x", "bar": "y", "baz": "z"},
+     ...     }
+     ... )
      >>> parser.sections()
      ['section1', 'section2', 'section3']
-     >>> [option for option in parser['section3']]
+     >>> [option for option in parser["section3"]]
      ['foo', 'bar', 'baz']
 
 * *allow_no_value*, default value: ``False``
@@ -683,13 +682,13 @@ be overridden by subclasses or by attribute assignment.
    .. doctest::
 
       >>> custom = configparser.ConfigParser()
-      >>> custom['section1'] = {'funky': 'nope'}
-      >>> custom['section1'].getboolean('funky')
+      >>> custom["section1"] = {"funky": "nope"}
+      >>> custom["section1"].getboolean("funky")
       Traceback (most recent call last):
       ...
       ValueError: Not a boolean: nope
-      >>> custom.BOOLEAN_STATES = {'sure': True, 'nope': False}
-      >>> custom['section1'].getboolean('funky')
+      >>> custom.BOOLEAN_STATES = {"sure": True, "nope": False}
+      >>> custom["section1"].getboolean("funky")
       False
 
    Other typical Boolean pairs include ``accept``/``reject`` or
@@ -709,22 +708,21 @@ be overridden by subclasses or by attribute assignment.
       >>> config = """
       ... [Section1]
       ... Key = Value
-      ...
       ... [Section2]
       ... AnotherKey = Value
       ... """
       >>> typical = configparser.ConfigParser()
       >>> typical.read_string(config)
-      >>> list(typical['Section1'].keys())
+      >>> list(typical["Section1"].keys())
       ['key']
-      >>> list(typical['Section2'].keys())
+      >>> list(typical["Section2"].keys())
       ['anotherkey']
       >>> custom = configparser.RawConfigParser()
       >>> custom.optionxform = lambda option: option
       >>> custom.read_string(config)
-      >>> list(custom['Section1'].keys())
+      >>> list(custom["Section1"].keys())
       ['Key']
-      >>> list(custom['Section2'].keys())
+      >>> list(custom["Section2"].keys())
       ['AnotherKey']
 
    .. note::
@@ -747,7 +745,6 @@ be overridden by subclasses or by attribute assignment.
       >>> config = """
       ... [Section 1]
       ... option = value
-      ...
       ... [  Section 2  ]
       ... another = val
       ... """
